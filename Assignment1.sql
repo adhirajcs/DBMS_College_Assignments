@@ -62,7 +62,7 @@ select client_name,city from client
 -- (b) List the various products available.
 select product_name from product
 
--- (c) Find the names of all clients having ‘a’ as the second letter in their names.
+-- (c) Find the names of all clients having â€˜aâ€™ as the second letter in their names.
 select client_name from client where client_name like '_a%'
 
 -- (d) List all the clients who are located in TEZPUR.
@@ -94,10 +94,10 @@ update sales_order_details set sales_order_date='16-08-08' where sales_order_no=
 -- (l) Change the bal_due of client_no CN01003 to 1200
 update client set bal_due='1200' where client_id='cn01003'
 
--- (m)Find the product with description as ‘HDD1034’ and ‘DVDRW’
+-- (m)Find the product with description as â€˜HDD1034â€™ and â€˜DVDRWâ€™
 select product_name from product where product_description='HDD1034' or product_description='DVDRW'
 
--- (n) List the names, city and state of the clients not in the state of ‘ASSAM’
+-- (n) List the names, city and state of the clients not in the state of â€˜ASSAMâ€™
 select client_name,city,state from client where state<>'assam'
 
 -- (o) List of all orders that were canceled in the of March.
