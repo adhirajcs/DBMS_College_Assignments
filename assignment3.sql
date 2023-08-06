@@ -83,3 +83,60 @@ insert into EMP values(null,'null','CLRK',106,'10-12-1980',18000,null,'','','10-
 
 select * from EMP
 
+
+/*
+	SET 1
+*/
+
+
+-- 1. Display all records from EMP,DEPT and PROJECTS table
+select * from EMP
+select * from DEPT
+select * from PROJECTS
+
+-- 2. Display records of Employees who have salary more than 25000 or working in department D2
+select * from EMP where SAL>25000 and Dno='D2';
+
+-- 3. Update the DNO of first record in PROJECTS to D5, confirm the result with reason.
+update PROJECTS set DNO='D5' where ROWNUM<=1;
+select * from PROJECTS
+
+-- 4. Update the Job of employee with EmpNo 123 to MGR, salary to 35000 and his manager as 111.
+update EMP set EJOB='MGR',SAL=35000, MGR_ID=111
+where EMPNO=123;
+
+-- 5. List all employee names and their salaries, whose salary lies between 25200/- and 35200/- both inclusive.
+select ENAME, SAL from EMP where SAL>=25200 and SAL<=35200;
+
+-- 6. List all employee names reporting to employees 100,125,150
+select ENAME from EMP where MGR_ID in(100,125,150);
+
+-- 7. List all employees whose name starts with either M or R.
+select * from EMP where ENAME like 'M%' or ENAME like 'R%';
+
+-- 8. List the name of employees whose name do not starts with M.
+select * from EMP eher ENAME not like 'M%';
+
+-- 9. List all kind jobs available in employee table, avoid displaying duplicates.
+select distinct(EJOB) from EMP;
+
+-- 10. List minimum, maximum, average salaries in company.
+select min(SAL),max(SAL),AVG(sal) from EMP;
+
+-- 11. Display the number of employees working in each project.
+select PROJ_ID,count(*) from EMP group by PROJ_ID;
+
+-- 12. List the Employees name and their manager‟s names
+select E.ENAME as "Employee Name", M.ENAME as "Manager's Name"
+from EMP e
+left outer join EMP M on E.MGR_ID=M.EMPNO;
+
+-- 13. List Employees Name, their department name and Projects Name in which they are working.
+select EMP.ENAME, DEPT.DNAME, PROJECTS.PRJ_NAME
+from EMP
+inner join DEPT on EMP.Dno = DEPT.DNO
+inner join PROJOECTS on DEPT.DNO = PROJECTS.DNO;
+
+-- 14. List the employee names, salary of employees whose first character of name is R, 2nd and 3rd
+--characters are „v‟,‟i‟ and remaining characters are unknown.
+select ENAME,SAL from EMP where ENAME like 'Rvi%';
