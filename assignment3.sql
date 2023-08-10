@@ -1,3 +1,7 @@
+SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_DATE_FORMAT';
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
+
+
 Create table DEPT( 
 Dno Varchar2(3) constraint dept_primary primary key check (Dno like 'D%'), 
 Dname Varchar2(10) unique 
@@ -14,7 +18,7 @@ COMM number(7,2) default 1000,
 Dno varchar2(3) references DEPT(Dno), 
 PRJ_ID varchar2(9) default 'CLRK', constraint check_prj check( EJOB in('CLRK','MGR','A.MGR','GM','CEO')), 
 DATE_OF_JOIN date, 
-constraint check_birth_date check (BIRTH_DATE<DATE_OF_JOIN) 
+constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
 );
 
 CREATE TABLE PROJECTS( 
@@ -43,7 +47,7 @@ constraint chk_locations check (LOCATIONS in('BNG','MNG','MUB','HYD','CHN'));
 insert into DEPT values('D1','Marketing','CHN');
 insert into DEPT values('D2','Research','MNG');
 insert into DEPT values('D3','Administrator','BNG'); -- value too large for column "DEPT"."DNAME" (actual: 13, maximum: 10) 
-insert into DEPT values('D4','','BGG'); --check constraint (CHK_LOCATIONS)
+insert into DEPT values('D4','','BGG'); -- check constraint (CHK_LOCATIONS)
 insert into DEPT values('D5','IT','BNG');
 insert into DEPT values(Null,'Corporate','HYD'); -- primary key cannot insert NULL into ("DEPT"."DNO")
 -- 2 new records inserted
@@ -65,40 +69,44 @@ insert into PROJECTS values('D5','P1','',2,null,null);
 select * from PROJECTS;
 
 
-insert into EMP values(150,'Jaitra','CEO',null,'10-12-1970',60000,30000,null,null,'3-12-1990'); -- not a valid month
-insert into EMP values(111,'Raghu','GM',150,'10-12-1974',45000,15000,null,null,'3-12-1985'); -- not a valid month
-insert into EMP values(100,'Ravi','MGR',111,'10-10-1985',32000,'','D1','P1','2-10-2001'); -- not a valid month
-insert into EMP values(106,'','MGR',100,'2-10-1986',null,'','D2','','2-10-1985'); 
+insert into EMP values(150,'Jaitra','CEO',null,'10-12-1970',60000,30000,null,null,'3-12-1990'); 
+insert into EMP values(111,'Raghu','GM',150,'10-12-1974',45000,15000,null,null,'3-12-1985'); 
+insert into EMP values(100,'Ravi','MGR',111,'10-10-1985',32000,'','D1','P1','2-10-2001'); 
+insert into EMP values(106,'','MGR',100,'2-10-1986',null,'','D2','','2-10-1985'); -- check constraint (CHECK_BIRTH_DATE)
 insert into EMP values(125,'Manu','A.MGR',150,'10-12-1980',null,null,'D4','P2','2-10-2002');
-insert into EMP values(103,'','A.CLRK',111,'10-12-1980',null,null,'D1','P1','2-10-2001');
+insert into EMP values(103,'','A.CLRK',111,'10-12-1980',null,null,'D1','P1','2-10-2001'); -- check constraint (CHECK_EJOB)
 insert into EMP values(103,'Rajdip','CLRK',111,'2-10-1980',null,null,'D1','P3','2-10-2002');
-insert into EMP values(103,'Aniket','CLRK',111,'10-12-1980',null,null,'D1','P3','2-10-2001');
-insert into EMP values(104,'Pratik','CLERK',100,'2-10-1980',null,null,'D2','P1','2-10-2005');
-insert into EMP values(106,'','MGR',100,'2-10-1986',null,null,'D2','','2-10-1985');
-insert into EMP values(123,'Mahesh','CLRK',106,'10-12-1974',25000,null,'D3','P2','2-10-2002');
-insert into EMP values(108,'','CLRK',106,'10-12-1970',null,null,'D9','','2-10-1985');
-insert into EMP values(null,'null','CLRK',106,'10-12-1980',18000,null,'','','10-12-1980');
+insert into EMP values(103,'Aniket','CLRK',111,'10-12-1980',null,null,'D1','P3','2-10-2001'); -- Primary key must be unique
+insert into EMP values(104,'Pratik','CLERK',100,'2-10-1980',null,null,'D2','P1','2-10-2005'); -- check constraint (CHECK_EJOB)
+insert into EMP values(106,'','MGR',100,'2-10-1986',null,null,'D2','','2-10-1985'); --  check constraint (CHECK_BIRTH_DATE)
+insert into EMP values(123,'Mahesh','CLRK',106,'10-12-1974',25000,null,'D3','P2','2-10-2002'); -- integrity constraint violated - parent key not found 
+insert into EMP values(108,'','CLRK',106,'10-12-1970',null,null,'D9','','2-10-1985'); -- integrity constraint violated - parent key not found
+insert into EMP values(null,'null','CLRK',106,'10-12-1980',18000,null,'','','10-12-1980'); -- cannot insert NULL into ("EMP"."EMPNO")
 --new 5 records--
-
+insert into EMP values(106,'Amir','MGR',100,'1-10-1985',null,'','D2','','2-10-1985');
+insert into EMP values(107,'Rajesh','CLRK',111,'10-12-1980',null,null,'D1','P1','2-10-2001');
+insert into EMP values(123,'Ram','CLRK',106,'10-12-1974',25000,null,'D3','P2','2-10-2002');
+insert into EMP values(109,'Riya','CLRK',106,'10-11-1980',25000,15000,'D5','P1','10-12-1980');
+insert into EMP values(110,'Rvi','CLRK',106,'10-11-1980',25000,15000,'D5','P1','10-12-1980');
 
 select * from EMP
 
 
 /*
-	SET 1
+	SET I
 */
 
 
 -- 1. Display all records from EMP,DEPT and PROJECTS table
-select * from EMP
-select * from DEPT
-select * from PROJECTS
+select * from EMP;
+select * from DEPT;
+select * from PROJECTS;
 
 -- 2. Display records of Employees who have salary more than 25000 or working in department D2
-select * from EMP where SAL>25000 and Dno='D2';
+select * from EMP where SAL>25000 or Dno='D2';
 
 -- 3. Update the DNO of first record in PROJECTS to D5, confirm the result with reason.
-update PROJECTS set DNO='D5' where ROWNUM<=1;
+update PROJECTS set DNO='D5' where ROWNUM=1;
 select * from PROJECTS
 
 -- 4. Update the Job of employee with EmpNo 123 to MGR, salary to 35000 and his manager as 111.
@@ -115,7 +123,7 @@ select ENAME from EMP where MGR_ID in(100,125,150);
 select * from EMP where ENAME like 'M%' or ENAME like 'R%';
 
 -- 8. List the name of employees whose name do not starts with M.
-select * from EMP eher ENAME not like 'M%';
+select * from EMP where ENAME not like 'M%';
 
 -- 9. List all kind jobs available in employee table, avoid displaying duplicates.
 select distinct(EJOB) from EMP;
@@ -124,7 +132,7 @@ select distinct(EJOB) from EMP;
 select min(SAL),max(SAL),AVG(sal) from EMP;
 
 -- 11. Display the number of employees working in each project.
-select PROJ_ID,count(*) from EMP group by PROJ_ID;
+select PRJ_ID,count(*) from EMP group by PRJ_ID;
 
 -- 12. List the Employees name and their manager‟s names
 select E.ENAME as "Employee Name", M.ENAME as "Manager's Name"
@@ -135,7 +143,7 @@ left outer join EMP M on E.MGR_ID=M.EMPNO;
 select EMP.ENAME, DEPT.DNAME, PROJECTS.PRJ_NAME
 from EMP
 inner join DEPT on EMP.Dno = DEPT.DNO
-inner join PROJOECTS on DEPT.DNO = PROJECTS.DNO;
+inner join PROJECTS on DEPT.DNO = PROJECTS.DNO;
 
 -- 14. List the employee names, salary of employees whose first character of name is R, 2nd and 3rd
 --characters are „v‟,‟i‟ and remaining characters are unknown.
