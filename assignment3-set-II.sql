@@ -184,8 +184,14 @@ set COMM=COMM+SAL*10/100;
 
 
 -- 16. List the name of employees who are working in project with credit more than7 and display
---name with only first letter capital and replace the character „a‟(if present) in the name by „$‟.
-
+--name with only first letter capital and replace the character 'a'(if present) in the name by '$'.
+select replace(initcap(ENAME), 'a', '$') as EMP_Name
+from EMP E
+join PROJECTS P on E.Dno = P.DNO and E.PRJ_ID = p.PRJ_NO
+where P.PRJ_CREDITS >= 7;
 
 -- 17. Display department Name and Total amount spent on each department by the company as Salary.
-
+select D.Dname, sum(E.SAL) as salary
+from DEPT D
+join EMP E on D.Dno = E.Dno
+group by D.Dname;
