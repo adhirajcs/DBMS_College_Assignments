@@ -75,9 +75,7 @@ select product_name from product where sell_price>2000 and sell_price<=5000
 alter table product add (NEW_PRICE varchar(20))
 
 -- (g) Rename the column product_rate of Sales_Order_Details to new_product_rate.
-desc product
-alter table product rename column product_rate to new_product_rate
-desc product
+alter table Sales_Order_Details rename column product_rate to new_product_rate
 
 -- (h) List the products in sorted order of their description.
 select * from product order by PRODUCT_DESCRIPTION ASC
@@ -101,7 +99,7 @@ select product_name from product where product_description='HDD1034' or product_
 select client_name,city,state from client where state<>'assam'
 
 -- (o) List of all orders that were canceled in the of March.
-select sales_order_no from sales_order_details where cancel_date like '%-03-%'
+select * from sales_order_details where cancel_date like '%-03-%'
 
 
 
