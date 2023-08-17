@@ -134,49 +134,115 @@ where E.SAL between 20000 and 50000
 	and D.LOCATIONS = 'CHN';
 
 -- 6. Display those employees whose salary is greater than his manager salary?
-
+select E.ENAME as emp_name,
+    E.SAL as emp_sal,
+    M.ENAME as mgr_name,
+    M.SAL as mgr_sal
+from EMP E
+join EMP M on E.MGR_ID = M.EMPNO
+where E.SAL > M.SAL;
 
 -- 7. Display those employees who are working in the same dept where his manager is
 -- working?
-
+select E.ENAME as emp_name,
+    E.DEPTNO as emp_dept_no,
+    M.ENAME as mgr_name,
+    M.DEPTNO as mgr_dept_no
+from EMP E
+join EMP M on E.MGR_ID = M.EMPNO
+where E.DEPTNO = M.DEPTNO;
 
 -- 8. Display employees name for the dept no D1 or D3 while joined the company before 31-dec-82?
-
+select E.ENAME as emp_name
+from EMP E
+where (E.DEPTNO = 'D1' or E.DEPTNO = 'D3') and 
+    (DATE_OF_JOIN < to_date('31-DEC-1982', 'DD-MM-YYYY'));
 
 -- 9. Update the salary of each employee by 10% increment who are not eligible for
 -- commission?
-
+update EMP
+-- SET SAL = SAL * 1.10		alternative way
+set SAL = (SAL+(SAL*10/100))
+where COMM is NULL;
 
 -- 10. Find out the top 3 earners of the company?
-
+select ENAME, SAL
+from EMP
+where SAL is not null
+order by SAL DESC
+fetch first 3 rows only;
 
 -- 11. Display name of those employees who are getting the highest salary in their department.
-
+select E.ENAME, E.SAL, E.DEPTNO
+from EMP E
+where E.SAL = (
+    select MAX(E2.SAL)
+    from EMP E2
+    where E.DEPTNO = E2.DEPTNO
+    );
 
 -- 12. Select count of employees in each department where count greater than 3?
-
+select count(*), DEPTNO
+from EMP
+group by DEPTNO
+having count(*) > 3;
 
 -- 13. Display DNAME where at least 3 are working and display only department name?
-
+select D.DNAME
+from DEPT D
+where D.DNO in (
+    select E.DEPTNO
+    from EMP E
+    group by E.DEPTNO
+    having count(*) >= 3
+);
 
 -- 14. Display those managers name whose salary is more than average salary of his
 -- employees?
-
+select M.ENAME as manager_name
+from EMP M
+join EMP E on M.EMPNO = E.MGR_ID
+group by M.ENAME, M.SAL
+having M.SAL > avg(E.SAL);
 
 -- 15. Display those employees whose salary is odd value?
-
+select ENAME, SAL
+from EMP
+where mod(SAL, 2) = 1;
 
 -- 16. List of employees who do not get any commission.
-
+select ENAME, COMM
+from EMP
+where COMM is null;
 
 -- 17. Display those employees whose salary contains atleast 3 digits?
-
+select ENAME, SAL
+from EMP
+where to_char(SAL) like '%___%';
+-- where length(to_char(SAL) >= 3;    this also includes NULL values for SAL
 
 -- 18. Delete those employees who joined the company 10 years back from today?
-
+delete from EMP
+where DATE_OF_JOIN = SYSDATE - interval '10' year;
 
 -- 19. Display the name of employees who joined on the same date?
-
+select E.ENAME, E.DATE_OF_JOIN
+from EMP E
+where E.DATE_OF_JOIN in (
+    select E2.DATE_OF_JOIN
+    from EMP E2
+    group by E2.DATE_OF_JOIN
+    having count(*) > 1
+);
 
 -- 20. Display the manager who is having maximum number of employees working under him?
-
+select M.ENAME as manager_name, count(E.EMPNO) as num_employees
+from EMP M
+join EMP E on M.EMPNO = E.MGR_ID
+group by M.ENAME
+having count(E.EMPNO) = (
+    select max(count(EMPNO))
+    from EMP
+    where MGR_ID is not null
+    group by MGR_ID
+);
