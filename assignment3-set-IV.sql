@@ -21,7 +21,7 @@ DATE_OF_JOIN date,
 constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
 );
 
-create TABLE PROJECTS( 
+create table PROJECTS( 
 DNO varchar2(3) references DEPT(DNO) not not, 
 PRJ_NO varchar2(5) constraint CHK_PRJ_NO check  (PRJ_NO like 'P%') not null, 
 PRJ_NAME varchar2(10), 
@@ -34,9 +34,9 @@ Primary key(DNO, PRJ_NO)
 
 alter table EMP modify PRJ_ID varchar2(5);
 
-alter TABLE EMP DROP constraint check_PRJ;
+alter table EMP DROP constraint check_PRJ;
 
-alter TABLE EMP add constraint fk_employee_PROJECTS  
+alter table EMP add constraint fk_employee_PROJECTS  
 foreign key (DEPTNO, PRJ_ID) references PROJECTS(DNO, PRJ_NO);
 
 alter table DEPT  
