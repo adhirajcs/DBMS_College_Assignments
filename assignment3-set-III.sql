@@ -1,15 +1,15 @@
-SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER = 'NLS_DATE_FORMAT';
-ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
+select value from NLS_SESSION_PARAMETERS where PARAMETER = 'NLS_DATE_FORMAT';
+alter SESSION set NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
 
-Create table DEPT( 
-DNO Varchar2(3) constraint dept_primary primary key check (DNO like 'D%'), 
-DNAME Varchar2(10) unique 
+create table DEPT( 
+DNO varchar2(3) constraint dept_primary Primary key check (DNO like 'D%'), 
+DNAME varchar2(10) unique 
 );
 
-Create table EMP( 
-EMPNO NUMBER(4) primary key, 
-ENAME Varchar2(10), 
+create table EMP( 
+EMPNO number(4) Primary key, 
+ENAME varchar2(10), 
 EJOB varchar2(9) default 'CLRK', constraint check_ejob check( EJOB in('CLRK','MGR','A.MGR','GM','CEO')), 
 MGR_ID number(4) references EMP(EMPNO), 
 BIRTH_DATE date, 
@@ -21,23 +21,23 @@ DATE_OF_JOIN date,
 constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
 );
 
-CREATE TABLE PROJECTS( 
-DNO VARCHAR2(3) REFERENCES DEPT(DNO) NOT NULL, 
-PRJ_NO VARCHAR2(5) CONSTRAINT CHK_PRJ_NO CHECK  (PRJ_NO LIKE 'P%') NOT NULL, 
-PRJ_NAME VARCHAR2(10), 
-PRJ_CREDITS NUMBER(2) CONSTRAINT CHK_PRJ_CREDITS CHECK (PRJ_CREDITS BETWEEN 1 AND 10), 
+create TABLE PROJECTS( 
+DNO varchar2(3) references DEPT(DNO) not not, 
+PRJ_NO varchar2(5) constraint CHK_PRJ_NO check  (PRJ_NO like 'P%') not null, 
+PRJ_NAME varchar2(10), 
+PRJ_CREDITS number(2) constraint CHK_PRJ_CREDITS check (PRJ_CREDITS between 1 and 10), 
 START_DATE DATE, 
 END_DATE DATE, 
-CHECK (END_DATE > START_DATE), 
-PRIMARY KEY(DNO, PRJ_NO) 
+check (END_DATE > START_DATE), 
+Primary key(DNO, PRJ_NO) 
 );
 
 alter table EMP modify PRJ_ID varchar2(5);
 
-ALTER TABLE EMP DROP CONSTRAINT CHECK_PRJ;
+alter TABLE EMP DROP constraint check_PRJ;
 
-ALTER TABLE EMP ADD CONSTRAINT fk_employee_PROJECTS  
-FOREIGN KEY (DNO, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
+alter TABLE EMP add constraint fk_employee_PROJECTS  
+foreign key (DEPTNO, PRJ_ID) references PROJECTS(DNO, PRJ_NO);
 
 alter table DEPT  
 add LOCATIONS varchar2(9) default 'BNG' 
@@ -49,7 +49,7 @@ insert into DEPT values('D2','Research','MNG');
 insert into DEPT values('D3','Administrator','BNG'); -- value too large for column "DEPT"."DNAME" (actual: 13, maximum: 10) 
 insert into DEPT values('D4','','BGG'); -- check constraint (CHK_LOCATIONS)
 insert into DEPT values('D5','IT','BNG');
-insert into DEPT values(Null,'Corporate','HYD'); -- primary key cannot insert NULL into ("DEPT"."DNO")
+insert into DEPT values(null,'Corporate','HYD'); -- Primary key cannot insert null into ("DEPT"."DNO")
 -- 2 new records inserted
 insert into DEPT values('D4','Corporate','HYD');
 insert into DEPT values('D3','Sales','BNG');
@@ -72,16 +72,16 @@ select * from PROJECTS;
 insert into EMP values(150,'Jaitra','CEO',null,'10-12-1970',60000,30000,null,null,'3-12-1990'); 
 insert into EMP values(111,'Raghu','GM',150,'10-12-1974',45000,15000,null,null,'3-12-1985'); 
 insert into EMP values(100,'Ravi','MGR',111,'10-10-1985',32000,'','D1','P1','2-10-2001'); 
-insert into EMP values(106,'','MGR',100,'2-10-1986',null,'','D2','','2-10-1985'); -- check constraint (CHECK_BIRTH_DATE)
+insert into EMP values(106,'','MGR',100,'2-10-1986',null,'','D2','','2-10-1985'); -- check constraint (check_BIRTH_DATE)
 insert into EMP values(125,'Manu','A.MGR',150,'10-12-1980',null,null,'D4','P2','2-10-2002');
-insert into EMP values(103,'','A.CLRK',111,'10-12-1980',null,null,'D1','P1','2-10-2001'); -- check constraint (CHECK_EJOB)
+insert into EMP values(103,'','A.CLRK',111,'10-12-1980',null,null,'D1','P1','2-10-2001'); -- check constraint (check_EJOB)
 insert into EMP values(103,'Rajdip','CLRK',111,'2-10-1980',null,null,'D1','P3','2-10-2002');
 insert into EMP values(103,'Aniket','CLRK',111,'10-12-1980',null,null,'D1','P3','2-10-2001'); -- Primary key must be unique
-insert into EMP values(104,'Pratik','CLERK',100,'2-10-1980',null,null,'D2','P1','2-10-2005'); -- check constraint (CHECK_EJOB)
-insert into EMP values(106,'','MGR',100,'2-10-1986',null,null,'D2','','2-10-1985'); --  check constraint (CHECK_BIRTH_DATE)
+insert into EMP values(104,'Pratik','CLERK',100,'2-10-1980',null,null,'D2','P1','2-10-2005'); -- check constraint (check_EJOB)
+insert into EMP values(106,'','MGR',100,'2-10-1986',null,null,'D2','','2-10-1985'); --  check constraint (check_BIRTH_DATE)
 insert into EMP values(123,'Mahesh','CLRK',106,'10-12-1974',25000,null,'D3','P2','2-10-2002'); -- integrity constraint violated - parent key not found 
 insert into EMP values(108,'','CLRK',106,'10-12-1970',null,null,'D9','','2-10-1985'); -- integrity constraint violated - parent key not found
-insert into EMP values(null,'null','CLRK',106,'10-12-1980',18000,null,'','','10-12-1980'); -- cannot insert NULL into ("EMP"."EMPNO")
+insert into EMP values(null,'null','CLRK',106,'10-12-1980',18000,null,'','','10-12-1980'); -- cannot insert null into ("EMP"."EMPNO")
 --new 5 records--
 insert into EMP values(106,'Amir','MGR',100,'1-10-1985',null,'','D2','','2-10-1985');
 insert into EMP values(107,'Rajesh','CLRK',111,'10-12-1980',null,null,'D1','P1','2-10-2001');
@@ -106,7 +106,7 @@ group by EJOB;
 -- 2. Display name of the department from which maximum number of employees are working on project P1
 select D.DNAME as "Department Name"
 from DEPT D
-join EMP E on D.DNO = E.DNO
+join EMP E on D.DNO = E.DEPTNO
 where E.PRJ_ID = 'P1'
 group by D.DNO, D.DNAME
 order by count(E.EMPNO) DESC
@@ -115,14 +115,14 @@ fetch first 1 row only;
 -- 3. Display department names and number of CLRK working in the departments.
 select D.DNAME as "Deparment Name", count(E.EMPNO) as "Number of CLRK"
 from DEPT D
-join EMP E on D.DNO = E.DNO
+join EMP E on D.DNO = E.DEPTNO
 where E.EJOB = 'CLRK'
 group by D.DNO, D.DNAME;
 
 -- 4. Display Employee names who are not working in any of the projects.
 SELECT E.ENAME
 FROM EMP E
-left join PROJECTS P on E.DNO = P.DNO and E.PRJ_ID = P.PRJ_NO
+left join PROJECTS P on E.DEPTNO = P.DNO and E.PRJ_ID = P.PRJ_NO
 where P.PRJ_NO is null;
 
 -- 5. Create a View EMP_PRJ_VW to display records of employees of „marketing‟ department
@@ -130,10 +130,10 @@ where P.PRJ_NO is null;
 create view EMP_PRJ_VW as
 select E.ENAME, P.PRJ_NAME
 from EMP E
-join PROJECTS P on E.DNO = P.DNO and E.PRJ_ID = P.PRJ_NO
-where E.DNO = 'D1';
+join PROJECTS P on E.DEPTNO = P.DNO and E.PRJ_ID = P.PRJ_NO
+where E.DEPTNO = 'D1';
 
--- join DEPT D on E.DNO = D.DNO   extra line for the alternate way
+-- join DEPT D on E.DEPTNO = D.DNO   extra line for the alternate way
 -- where D.DNAME = 'marketing';   alternate way
 
 
@@ -178,7 +178,7 @@ where DNO in (
 UNION
 select D.LOCATIONS as Location_of_Department, E.ENAME as Employee_Name
 from DEPT D
-join EMP E on D.DNO = E.DNO
+join EMP E on D.DNO = E.DEPTNO
     
 -- where D.DNAME = 'Marketing' or DNAME = 'Research'
 where D.DNAME in ('Marketing', 'Research')
