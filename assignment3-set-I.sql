@@ -3,8 +3,8 @@ ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
 
 Create table DEPT( 
-Dno Varchar2(3) constraint dept_primary primary key check (Dno like 'D%'), 
-Dname Varchar2(10) unique 
+DNO Varchar2(3) constraint dept_primary primary key check (DNO like 'D%'), 
+DNAME Varchar2(10) unique 
 );
 
 Create table EMP( 
@@ -15,7 +15,7 @@ MGR_ID number(4) references EMP(EMPNO),
 BIRTH_DATE date, 
 SAL number(7,2) default 20001, constraint check_sal_min check(SAL>20000), 
 COMM number(7,2) default 1000, 
-Dno varchar2(3) references DEPT(Dno), 
+DEPTNO varchar2(3) references DEPT(DNO), 
 PRJ_ID varchar2(9) default 'CLRK', constraint check_prj check( EJOB in('CLRK','MGR','A.MGR','GM','CEO')), 
 DATE_OF_JOIN date, 
 constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
@@ -37,7 +37,7 @@ alter table EMP modify PRJ_ID varchar2(5);
 ALTER TABLE EMP DROP CONSTRAINT CHECK_PRJ;
 
 ALTER TABLE EMP ADD CONSTRAINT fk_employee_PROJECTS  
-FOREIGN KEY (Dno, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
+FOREIGN KEY (DNO, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
 
 alter table DEPT  
 add LOCATIONS varchar2(9) default 'BNG' 
@@ -103,7 +103,7 @@ select * from DEPT;
 select * from PROJECTS;
 
 -- 2. Display records of Employees who have salary more than 25000 or working in department D2
-select * from EMP where SAL>25000 or Dno='D2';
+select * from EMP where SAL>25000 or DNO='D2';
 
 -- 3. Update the DNO of first record in PROJECTS to D5, confirm the result with reason.
 update PROJECTS set DNO='D5' where ROWNUM=1;
@@ -142,7 +142,7 @@ left outer join EMP M on E.MGR_ID=M.EMPNO;
 -- 13. List Employees Name, their department name and Projects Name in which they are working.
 select EMP.ENAME, DEPT.DNAME, PROJECTS.PRJ_NAME
 from EMP
-inner join DEPT on EMP.Dno = DEPT.DNO
+inner join DEPT on EMP.DNO = DEPT.DNO
 inner join PROJECTS on DEPT.DNO = PROJECTS.DNO;
 
 -- 14. List the employee names, salary of employees whose first character of name is R, 2nd and 3rd

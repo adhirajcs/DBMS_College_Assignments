@@ -3,8 +3,8 @@ ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
 
 Create table DEPT( 
-Dno Varchar2(3) constraint dept_primary primary key check (Dno like 'D%'), 
-Dname Varchar2(10) unique 
+DNO Varchar2(3) constraint dept_primary primary key check (DNO like 'D%'), 
+DNAME Varchar2(10) unique 
 );
 
 Create table EMP( 
@@ -15,7 +15,7 @@ MGR_ID number(4) references EMP(EMPNO),
 BIRTH_DATE date, 
 SAL number(7,2) default 20001, constraint check_sal_min check(SAL>20000), 
 COMM number(7,2) default 1000, 
-DEPTNO varchar2(3) references DEPT(Dno), 
+DEPTNO varchar2(3) references DEPT(DNO), 
 PRJ_ID varchar2(9) default 'CLRK', constraint check_prj check( EJOB in('CLRK','MGR','A.MGR','GM','CEO')), 
 DATE_OF_JOIN date, 
 constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
@@ -37,7 +37,7 @@ alter table EMP modify PRJ_ID varchar2(5);
 ALTER TABLE EMP DROP CONSTRAINT CHECK_PRJ;
 
 ALTER TABLE EMP ADD CONSTRAINT fk_employee_PROJECTS  
-FOREIGN KEY (Dno, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
+FOREIGN KEY (DNO, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
 
 alter table DEPT  
 add LOCATIONS varchar2(9) default 'BNG' 
@@ -129,7 +129,7 @@ select E.ENAME as "employee name",
     D.DNAME as "dept name",
     E.SAL as "salary", E.COMM
 from EMP E
-join DEPT D on E.Dno = D.Dno
+join DEPT D on E.DNO = D.DNO
 where E.SAL between 20000 and 50000
 	and D.LOCATIONS = 'CHN';
 
@@ -156,7 +156,7 @@ where E.SAL between 20000 and 50000
 -- 12. Select count of employees in each department where count greater than 3?
 
 
--- 13. Display dname where at least 3 are working and display only department name?
+-- 13. Display DNAME where at least 3 are working and display only department name?
 
 
 -- 14. Display those managers name whose salary is more than average salary of his

@@ -3,8 +3,8 @@ ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
 
 Create table DEPT( 
-Dno Varchar2(3) constraint dept_primary primary key check (Dno like 'D%'), 
-Dname Varchar2(10) unique 
+DNO Varchar2(3) constraint dept_primary primary key check (DNO like 'D%'), 
+DNAME Varchar2(10) unique 
 );
 
 Create table EMP( 
@@ -15,7 +15,7 @@ MGR_ID number(4) references EMP(EMPNO),
 BIRTH_DATE date, 
 SAL number(7,2) default 20001, constraint check_sal_min check(SAL>20000), 
 COMM number(7,2) default 1000, 
-Dno varchar2(3) references DEPT(Dno), 
+DEPTNO varchar2(3) references DEPT(DNO), 
 PRJ_ID varchar2(9) default 'CLRK', constraint check_prj check( EJOB in('CLRK','MGR','A.MGR','GM','CEO')), 
 DATE_OF_JOIN date, 
 constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
@@ -37,7 +37,7 @@ alter table EMP modify PRJ_ID varchar2(5);
 ALTER TABLE EMP DROP CONSTRAINT CHECK_PRJ;
 
 ALTER TABLE EMP ADD CONSTRAINT fk_employee_PROJECTS  
-FOREIGN KEY (Dno, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
+FOREIGN KEY (DNO, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
 
 alter table DEPT  
 add LOCATIONS varchar2(9) default 'BNG' 
@@ -100,7 +100,7 @@ select * from EMP
 -- 1. List the Projects name undertaken by Marketing Department.
 select PRJ_NAME
 from PROJECTS
-where Dno in(select Dno from DEPT where Dname like 'Marketing');
+where DNO in(select DNO from DEPT where DNAME like 'Marketing');
 
 -- 2. Display current date, 53, absolute value of -45 and current date as date with format MONTH-YY.
 select
@@ -116,18 +116,18 @@ from EMP
 order by SAL desc;
 
 -- 4. List the name of departments which are working with more than 1 project
-select D.Dname
+select D.DNAME
 from DEPT D
-join EMP E on D.Dno = E.Dno
-join PROJECTS P on D.Dno = P.DNO
-group by D.Dname
+join EMP E on D.DNO = E.DNO
+join PROJECTS P on D.DNO = P.DNO
+group by D.DNAME
 having count(DISTINCT P.PRJ_NO) >1;
 
 -- 5. Display department name, Max salary and Min salary in each department.
-select DEPT.Dname, MAX(EMP.SAL) as Max_Salary, MIN(EMP.SAL) as Min_Salary
+select DEPT.DNAME, MAX(EMP.SAL) as Max_Salary, MIN(EMP.SAL) as Min_Salary
 from DEPT
-join EMP on DEPT.Dno = EMP.Dno
-group by DEPT.Dname;
+join EMP on DEPT.DNO = EMP.DNO
+group by DEPT.DNAME;
 
 -- 6. List the employees whose experience is more than 5 years.
 select Ename
@@ -172,7 +172,7 @@ where months_between(END_DATE, START_DATE) > 12;
 -- 13. List the Employees Name who is working at Locations (BNG,MUB,HYD)
 select E.ENAME
 from EMP E
-join DEPT D on E.Dno = D.Dno
+join DEPT D on E.DNO = D.DNO
 where D.LOCATIONS in ('BNG','MUB','HYD');
 
 -- 14. Update the COMM column of EMP table based on the SAL. Use COMM=CMM+SAL*10/100
@@ -187,11 +187,11 @@ set COMM=COMM+SAL*10/100;
 --name with only first letter capital and replace the character 'a'(if present) in the name by '$'.
 select replace(initcap(ENAME), 'a', '$') as EMP_Name
 from EMP E
-join PROJECTS P on E.Dno = P.DNO and E.PRJ_ID = p.PRJ_NO
+join PROJECTS P on E.DNO = P.DNO and E.PRJ_ID = p.PRJ_NO
 where P.PRJ_CREDITS >= 7;
 
 -- 17. Display department Name and Total amount spent on each department by the company as Salary.
-select D.Dname, sum(E.SAL) as salary
+select D.DNAME, sum(E.SAL) as salary
 from DEPT D
-join EMP E on D.Dno = E.Dno
-group by D.Dname;
+join EMP E on D.DNO = E.DNO
+group by D.DNAME;

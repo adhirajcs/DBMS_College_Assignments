@@ -3,8 +3,8 @@ ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
 
 Create table DEPT( 
-Dno Varchar2(3) constraint dept_primary primary key check (Dno like 'D%'), 
-Dname Varchar2(10) unique 
+DNO Varchar2(3) constraint dept_primary primary key check (DNO like 'D%'), 
+DNAME Varchar2(10) unique 
 );
 
 Create table EMP( 
@@ -15,7 +15,7 @@ MGR_ID number(4) references EMP(EMPNO),
 BIRTH_DATE date, 
 SAL number(7,2) default 20001, constraint check_sal_min check(SAL>20000), 
 COMM number(7,2) default 1000, 
-Dno varchar2(3) references DEPT(Dno), 
+DEPTNO varchar2(3) references DEPT(DNO), 
 PRJ_ID varchar2(9) default 'CLRK', constraint check_prj check( EJOB in('CLRK','MGR','A.MGR','GM','CEO')), 
 DATE_OF_JOIN date, 
 constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN) 
@@ -37,7 +37,7 @@ alter table EMP modify PRJ_ID varchar2(5);
 ALTER TABLE EMP DROP CONSTRAINT CHECK_PRJ;
 
 ALTER TABLE EMP ADD CONSTRAINT fk_employee_PROJECTS  
-FOREIGN KEY (Dno, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
+FOREIGN KEY (DNO, PRJ_ID) REFERENCES PROJECTS(DNO, PRJ_NO);
 
 alter table DEPT  
 add LOCATIONS varchar2(9) default 'BNG' 
@@ -106,23 +106,23 @@ group by EJOB;
 -- 2. Display name of the department from which maximum number of employees are working on project P1
 select D.DNAME as "Department Name"
 from DEPT D
-join EMP E on D.Dno = E.Dno
+join EMP E on D.DNO = E.DNO
 where E.PRJ_ID = 'P1'
-group by D.Dno, D.Dname
+group by D.DNO, D.DNAME
 order by count(E.EMPNO) DESC
 fetch first 1 row only;
 
 -- 3. Display department names and number of CLRK working in the departments.
-select D.Dname as "Deparment Name", count(E.EMPNO) as "Number of CLRK"
+select D.DNAME as "Deparment Name", count(E.EMPNO) as "Number of CLRK"
 from DEPT D
-join EMP E on D.Dno = E.Dno
+join EMP E on D.DNO = E.DNO
 where E.EJOB = 'CLRK'
-group by D.Dno, D.Dname;
+group by D.DNO, D.DNAME;
 
 -- 4. Display Employee names who are not working in any of the projects.
 SELECT E.ENAME
 FROM EMP E
-left join PROJECTS P on E.Dno = P.DNO and E.PRJ_ID = P.PRJ_NO
+left join PROJECTS P on E.DNO = P.DNO and E.PRJ_ID = P.PRJ_NO
 where P.PRJ_NO is null;
 
 -- 5. Create a View EMP_PRJ_VW to display records of employees of „marketing‟ department
@@ -130,10 +130,10 @@ where P.PRJ_NO is null;
 create view EMP_PRJ_VW as
 select E.ENAME, P.PRJ_NAME
 from EMP E
-join PROJECTS P on E.Dno = P.DNO and E.PRJ_ID = P.PRJ_NO
-where E.Dno = 'D1';
+join PROJECTS P on E.DNO = P.DNO and E.PRJ_ID = P.PRJ_NO
+where E.DNO = 'D1';
 
--- join DEPT D on E.Dno = D.Dno   extra line for the alternate way
+-- join DEPT D on E.DNO = D.DNO   extra line for the alternate way
 -- where D.DNAME = 'marketing';   alternate way
 
 
@@ -141,7 +141,7 @@ where E.Dno = 'D1';
 select * from EMP_PRJ_VW;
 
 -- 7. Create an unique index on the column name DNAME on DEPT table
-create unique index index_unique_Dname on DEPT(DNAME);
+create unique index index_unique_DNAME on DEPT(DNAME);
 
 -- 8. Create an index on the columns (name and job) on EMP table.
 create index index_name_job on EMP(ENAME,EJOB);
@@ -178,7 +178,7 @@ where DNO in (
 UNION
 select D.LOCATIONS as Location_of_Department, E.ENAME as Employee_Name
 from DEPT D
-join EMP E on D.Dno = E.Dno
+join EMP E on D.DNO = E.DNO
     
 -- where D.DNAME = 'Marketing' or DNAME = 'Research'
 where D.DNAME in ('Marketing', 'Research')
