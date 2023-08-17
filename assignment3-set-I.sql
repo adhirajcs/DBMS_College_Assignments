@@ -22,7 +22,7 @@ constraint check_birth_date check (BIRTH_DATE < DATE_OF_JOIN)
 );
 
 create table PROJECTS( 
-DNO varchar2(3) references DEPT(DNO) not not, 
+DNO varchar2(3) references DEPT(DNO) not null, 
 PRJ_NO varchar2(5) constraint CHK_PRJ_NO check  (PRJ_NO like 'P%') not null, 
 PRJ_NAME varchar2(10), 
 PRJ_CREDITS number(2) constraint CHK_PRJ_CREDITS check (PRJ_CREDITS between 1 and 10), 
