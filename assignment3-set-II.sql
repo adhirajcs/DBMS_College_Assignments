@@ -161,7 +161,7 @@ where extract(day from DATE_OF_JOIN) = 12;
 select ENAME
 from EMP
 -- where months_between(SYSDATE, DATE_OF_JOIN) >= 120;
-where (months_between(SYSDATE, DATE_OF_JOIN)*12) >= 10;
+where (months_between(SYSDATE, DATE_OF_JOIN)/12) >= 10;
 
 
 -- 12. List the projects which have duration more than 1 year.
@@ -181,7 +181,10 @@ set COMM=COMM+SAL*10/100;
 
 -- 15. List employee names, padded to right with a series of three periods and space up to a width of
 --30, and project credits of projects in which they are working.(Use RPAD,LPAD)
-
+select rpad(ENAME, 30, ' ... ') as PaddedEmployeeName, 
+lpad(PRJ_CREDITS, 30) as PaddedProjectCredits 
+from EMP E 
+join PROJECTS P on E.DEPTNO = P.DNO and E.PRJ_ID = P.PRJ_NO;
 
 -- 16. List the name of employees who are working in project with credit more than7 and display
 --name with only first letter capital and replace the character 'a'(if present) in the name by '$'.
